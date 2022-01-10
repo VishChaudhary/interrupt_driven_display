@@ -1,16 +1,7 @@
-;***************************************************************************
-;*
-;* Title:subroutine_polled_based_display
-;* Author:
-;* Version:2.0
-;* Last updated: 11/17/21
-;* Target: AVR128DB48 @ 4MHZ
-;*
-;* VERSION HISTORY
-;* 1.0 Original version
-;* 2.0 Verison with isr
-;* 3.0 Verison with isr and delay with timer isr
-;***************************************************************************
+; subroutine_polled_based_display
+; Author: vish75000
+; Target: AVR128DB48 @ 4MHZ
+
 .dseg
 
 	bcd_entries: .byte 4		;creating the bcd_entries array x4000 to x4003
@@ -92,27 +83,6 @@ porte_ISR:
 	sei				;SREG I = 1
 	reti			;return from PORTE pin change ISR
 
-;***************************************************************************
-;* 
-;* "pull_enable" - Title
-;*
-;* Description: enables pullup and inventer in PORTC
-;* Author: 
-;* Version: 2.0
-;* Last updated: 11/17/2021
-;* Target: AVR128DB48 @4 MHz
-;* Number of words: 9
-;* Number of cycles: 1.75us
-;* Low registers modified: none
-;* High registers modified: none
-;*
-;* Parameters: 
-;* 
-;* Notes: 
-;* Version 1.0 was with indirect wpi
-;* Version 2.0 is with multipin config
-;***************************************************************************
-
 pull_enable:
 	push r16
 	ldi r16, 0x88					;turns on the inven and pullup
@@ -121,32 +91,7 @@ pull_enable:
 	sts PORTC_PINCTRLUPD, r16		;where there is a 1, the corresponding pin will have PINCONFIG in it
 	pop r16
 	ret
-
-;***************************************************************************
-;* 
-;* "multiplex_display" - Multiplex the Four Digit LED Display
-;*
-;* Description: Updates a single digit of the display and increments the 
-;* digit_num to the digit position to be displayed next.
-;* Author: 
-;* Version: 2.0
-;* Last updated: 11/17/2021
-;* Target: AVR128DB48 @4 MHz
-;* Number of words: 49
-;* Number of cycles: 10.00us
-;* Low registers modified: none
-;* High registers modified: none
-;*
-;* Parameters: 
-;* led_display:
-;* digit_num:
-;* Returns: outputs an segment pattern and turns on the digit driver for the next position in the display to be turned on
-;*
-;* Notes: the segments are PORTD (dp, a through g)
-;* drivers are controlled by PORTA(PA7 - PA4, 0 - 3)
-;*
-;***************************************************************************
-
+	
 multiplex_display:
 ISR_push:
 	push r16			;save register
@@ -229,28 +174,6 @@ overflow:
 	ldi r17, 0x00			;digit_num will be 0
 	sts digit_num, r17
 	rjmp output
-
-
-;***************************************************************************
-;* 
-;* "poll_digit_entry" - Polls Pushbutton for Conditional Digit Entry
-;* Author: 
-;* Version: 2.0
-;* Last updated: 11/12/2021
-;* Target: AVR128DB48 @4 MHz
-;* Number of words: 38
-;* Number of cycles: 46.00us
-;* Low registers modified: none
-;* High registers modified: none
-;*
-;* Parameters: none
-;* 
-;* Returns: none
-;*
-;* Notes: Version 1.0 did it through hard coding
-;* Version 2.0 did it in a loop with a stack
-;*
-;***************************************************************************
 
 poll_digit_entry:
 push_regs:
